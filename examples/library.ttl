@@ -1,0 +1,98 @@
+@prefix lib:  <https://example.org/library#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+# A compact library-domain ontology used as the running example. It is kept
+# small enough to be legible as a figure while still exercising every construct
+# the notations bind: class hierarchies, object and datatype properties,
+# functional properties, and cardinality restrictions.
+
+<https://example.org/library> a owl:Ontology ;
+    dct:title "Library Demonstration Ontology"@en ;
+    owl:versionInfo "1.0.0" .
+
+#################################################################
+#    Classes
+#################################################################
+
+lib:Publication a owl:Class ;
+    rdfs:label "Publication"@en .
+
+lib:Book a owl:Class ;
+    rdfs:label "Book"@en ;
+    rdfs:subClassOf lib:Publication ;
+    rdfs:subClassOf [ a owl:Restriction ;
+                      owl:onProperty lib:hasAuthor ;
+                      owl:minCardinality "1"^^xsd:nonNegativeInteger ] .
+
+lib:Journal a owl:Class ;
+    rdfs:label "Journal"@en ;
+    rdfs:subClassOf lib:Publication .
+
+lib:Person a owl:Class ;
+    rdfs:label "Person"@en .
+
+lib:Author a owl:Class ;
+    rdfs:label "Author"@en ;
+    rdfs:subClassOf lib:Person .
+
+lib:Member a owl:Class ;
+    rdfs:label "Member"@en ;
+    rdfs:subClassOf lib:Person ;
+    rdfs:subClassOf [ a owl:Restriction ;
+                      owl:onProperty lib:borrows ;
+                      owl:maxCardinality "5"^^xsd:nonNegativeInteger ] .
+
+lib:Library a owl:Class ;
+    rdfs:label "Library"@en .
+
+#################################################################
+#    Object properties
+#################################################################
+
+lib:hasAuthor a owl:ObjectProperty ;
+    rdfs:label "has author"@en ;
+    rdfs:domain lib:Publication ;
+    rdfs:range lib:Author .
+
+lib:borrows a owl:ObjectProperty ;
+    rdfs:label "borrows"@en ;
+    rdfs:domain lib:Member ;
+    rdfs:range lib:Book .
+
+lib:heldBy a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:label "held by"@en ;
+    rdfs:domain lib:Book ;
+    rdfs:range lib:Library .
+
+#################################################################
+#    Datatype properties
+#################################################################
+
+lib:title a owl:DatatypeProperty ;
+    rdfs:label "title"@en ;
+    rdfs:domain lib:Publication ;
+    rdfs:range xsd:string .
+
+lib:isbn a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "isbn"@en ;
+    rdfs:domain lib:Book ;
+    rdfs:range xsd:string .
+
+lib:issn a owl:DatatypeProperty ;
+    rdfs:label "issn"@en ;
+    rdfs:domain lib:Journal ;
+    rdfs:range xsd:string .
+
+lib:name a owl:DatatypeProperty ;
+    rdfs:label "name"@en ;
+    rdfs:domain lib:Person ;
+    rdfs:range xsd:string .
+
+lib:birthDate a owl:DatatypeProperty ;
+    rdfs:label "birth date"@en ;
+    rdfs:domain lib:Person ;
+    rdfs:range xsd:date .

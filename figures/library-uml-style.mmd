@@ -1,0 +1,22 @@
+graph LR
+  n0["Author"]
+  style n0 fill:#FFFFFF
+  n1["Book<br/>isbn : string"]
+  style n1 fill:#FFFFFF
+  n2["Journal<br/>issn : string"]
+  style n2 fill:#FFFFFF
+  n3["Library"]
+  style n3 fill:#FFFFFF
+  n4["Member"]
+  style n4 fill:#FFFFFF
+  n5["Person<br/>birth date : date<br/>name : string"]
+  style n5 fill:#FFFFFF
+  n6["Publication<br/>title : string"]
+  style n6 fill:#FFFFFF
+  n0 -.-> n5
+  n1 -.-> n6
+  n2 -.-> n6
+  n4 -.-> n5
+  n4 -->|"borrows 0..5"| n1
+  n6 -->|"has author 1..*"| n0
+  n1 -->|"held by 1"| n3

@@ -1,0 +1,279 @@
+{
+  "elements": [
+    {
+      "group": "nodes",
+      "data": {
+        "id": "https://example.org/library#Author",
+        "label": "Author"
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "https://example.org/library#Book",
+        "label": "Book\nisbn : string"
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "https://example.org/library#Journal",
+        "label": "Journal\nissn : string"
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "https://example.org/library#Library",
+        "label": "Library"
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "https://example.org/library#Member",
+        "label": "Member"
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "https://example.org/library#Person",
+        "label": "Person\nbirth date : date\nname : string"
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "https://example.org/library#Publication",
+        "label": "Publication\ntitle : string"
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "https://example.org/library#Author-gen-https://example.org/library#Person",
+        "source": "https://example.org/library#Author",
+        "target": "https://example.org/library#Person",
+        "label": ""
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "https://example.org/library#Book-gen-https://example.org/library#Publication",
+        "source": "https://example.org/library#Book",
+        "target": "https://example.org/library#Publication",
+        "label": ""
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "https://example.org/library#Journal-gen-https://example.org/library#Publication",
+        "source": "https://example.org/library#Journal",
+        "target": "https://example.org/library#Publication",
+        "label": ""
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "https://example.org/library#Member-gen-https://example.org/library#Person",
+        "source": "https://example.org/library#Member",
+        "target": "https://example.org/library#Person",
+        "label": ""
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "https://example.org/library#borrows",
+        "source": "https://example.org/library#Member",
+        "target": "https://example.org/library#Book",
+        "label": "borrows 0..5"
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "https://example.org/library#hasAuthor",
+        "source": "https://example.org/library#Publication",
+        "target": "https://example.org/library#Author",
+        "label": "has author 1..*"
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "https://example.org/library#heldBy",
+        "source": "https://example.org/library#Book",
+        "target": "https://example.org/library#Library",
+        "label": "held by 1"
+      }
+    }
+  ],
+  "style": [
+    {
+      "selector": "node[id = \"https://example.org/library#Author\"]",
+      "style": {
+        "shape": "rectangle",
+        "background-color": "#FFFFFF",
+        "label": "data(label)",
+        "text-wrap": "wrap",
+        "text-valign": "center",
+        "border-color": "#000000",
+        "border-width": 1
+      }
+    },
+    {
+      "selector": "node[id = \"https://example.org/library#Book\"]",
+      "style": {
+        "shape": "rectangle",
+        "background-color": "#FFFFFF",
+        "label": "data(label)",
+        "text-wrap": "wrap",
+        "text-valign": "center",
+        "border-color": "#000000",
+        "border-width": 1
+      }
+    },
+    {
+      "selector": "node[id = \"https://example.org/library#Journal\"]",
+      "style": {
+        "shape": "rectangle",
+        "background-color": "#FFFFFF",
+        "label": "data(label)",
+        "text-wrap": "wrap",
+        "text-valign": "center",
+        "border-color": "#000000",
+        "border-width": 1
+      }
+    },
+    {
+      "selector": "node[id = \"https://example.org/library#Library\"]",
+      "style": {
+        "shape": "rectangle",
+        "background-color": "#FFFFFF",
+        "label": "data(label)",
+        "text-wrap": "wrap",
+        "text-valign": "center",
+        "border-color": "#000000",
+        "border-width": 1
+      }
+    },
+    {
+      "selector": "node[id = \"https://example.org/library#Member\"]",
+      "style": {
+        "shape": "rectangle",
+        "background-color": "#FFFFFF",
+        "label": "data(label)",
+        "text-wrap": "wrap",
+        "text-valign": "center",
+        "border-color": "#000000",
+        "border-width": 1
+      }
+    },
+    {
+      "selector": "node[id = \"https://example.org/library#Person\"]",
+      "style": {
+        "shape": "rectangle",
+        "background-color": "#FFFFFF",
+        "label": "data(label)",
+        "text-wrap": "wrap",
+        "text-valign": "center",
+        "border-color": "#000000",
+        "border-width": 1
+      }
+    },
+    {
+      "selector": "node[id = \"https://example.org/library#Publication\"]",
+      "style": {
+        "shape": "rectangle",
+        "background-color": "#FFFFFF",
+        "label": "data(label)",
+        "text-wrap": "wrap",
+        "text-valign": "center",
+        "border-color": "#000000",
+        "border-width": 1
+      }
+    },
+    {
+      "selector": "edge[id = \"https://example.org/library#Author-gen-https://example.org/library#Person\"]",
+      "style": {
+        "curve-style": "bezier",
+        "label": "data(label)",
+        "target-arrow-shape": "triangle-tee",
+        "line-style": "solid",
+        "line-color": "#000000",
+        "font-size": 8
+      }
+    },
+    {
+      "selector": "edge[id = \"https://example.org/library#Book-gen-https://example.org/library#Publication\"]",
+      "style": {
+        "curve-style": "bezier",
+        "label": "data(label)",
+        "target-arrow-shape": "triangle-tee",
+        "line-style": "solid",
+        "line-color": "#000000",
+        "font-size": 8
+      }
+    },
+    {
+      "selector": "edge[id = \"https://example.org/library#Journal-gen-https://example.org/library#Publication\"]",
+      "style": {
+        "curve-style": "bezier",
+        "label": "data(label)",
+        "target-arrow-shape": "triangle-tee",
+        "line-style": "solid",
+        "line-color": "#000000",
+        "font-size": 8
+      }
+    },
+    {
+      "selector": "edge[id = \"https://example.org/library#Member-gen-https://example.org/library#Person\"]",
+      "style": {
+        "curve-style": "bezier",
+        "label": "data(label)",
+        "target-arrow-shape": "triangle-tee",
+        "line-style": "solid",
+        "line-color": "#000000",
+        "font-size": 8
+      }
+    },
+    {
+      "selector": "edge[id = \"https://example.org/library#borrows\"]",
+      "style": {
+        "curve-style": "bezier",
+        "label": "data(label)",
+        "target-arrow-shape": "vee",
+        "line-style": "solid",
+        "line-color": "#000000",
+        "font-size": 8
+      }
+    },
+    {
+      "selector": "edge[id = \"https://example.org/library#hasAuthor\"]",
+      "style": {
+        "curve-style": "bezier",
+        "label": "data(label)",
+        "target-arrow-shape": "vee",
+        "line-style": "solid",
+        "line-color": "#000000",
+        "font-size": 8
+      }
+    },
+    {
+      "selector": "edge[id = \"https://example.org/library#heldBy\"]",
+      "style": {
+        "curve-style": "bezier",
+        "label": "data(label)",
+        "target-arrow-shape": "vee",
+        "line-style": "solid",
+        "line-color": "#000000",
+        "font-size": 8
+      }
+    }
+  ]
+}

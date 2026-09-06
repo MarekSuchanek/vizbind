@@ -1,0 +1,42 @@
+{
+  "title": "VizBind: a declarative RDF vocabulary for notation-independent visualization of RDFS/OWL models",
+  "description": "<p>VizBind is a declarative RDF vocabulary that describes an ontology visual notation <em>as data</em> rather than as tool code. A notation is a set of binding rules, each separating <em>selection</em> of model constructs (via SPARQL), <em>mapping</em> to abstract visual constructs (node, edge, compartment, decorator), and engine-agnostic <em>styling</em>, with priority-based conflict resolution. The same RDFS/OWL model renders into different notations by swapping one file, and the same notation renders through different engines.</p><p>This deposit contains the binding vocabulary, two notations (a VOWL subset and a structurally contrasting UML-style notation), a proof-of-concept Python engine with Graphviz, Mermaid and Cytoscape.js adapters, six example ontologies, and the evaluation scripts that regenerate every figure and every number reported in the accompanying KEOD 2026 paper.</p><p>Research artifact for: Suchánek, M. and Pecka, J. (2026). <em>Binding Ontologies to Notation: A Declarative RDF Vocabulary for Notation-Independent Visualisation of RDFS/OWL Models.</em> KEOD 2026, SCITEPRESS.</p>",
+  "upload_type": "software",
+  "license": "Apache-2.0",
+  "access_right": "open",
+  "language": "eng",
+  "version": "0.1.0",
+  "creators": [
+    {
+      "name": "Suchánek, Marek",
+      "orcid": "0000-0001-7525-9218",
+      "affiliation": "Faculty of Information Technology, Czech Technical University in Prague"
+    },
+    {
+      "name": "Pecka, Jan",
+      "orcid": "0000-0002-8173-3913",
+      "affiliation": "Faculty of Information Technology, Czech Technical University in Prague"
+    }
+  ],
+  "keywords": [
+    "ontology visualization",
+    "visual notation",
+    "RDF",
+    "OWL",
+    "RDFS",
+    "SPARQL",
+    "declarative specification",
+    "design science research",
+    "knowledge engineering",
+    "semantic web"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/MarekSuchanek/vizbind",
+      "relation": "isSupplementTo",
+      "resource_type": "software",
+      "scheme": "url"
+    }
+  ],
+  "notes": "The vocabulary and the notation documents (vocab/, notations/) are additionally available under CC BY 4.0; see LICENSE-CC-BY-4.0.md in the repository. Third-party ontologies under examples/vendor/ retain their original licences, listed in examples/vendor/NOTICE.md."
+}

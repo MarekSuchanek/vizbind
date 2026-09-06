@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vizbind"
+version = "0.1.0"
+description = "A declarative RDF vocabulary for notation-independent visualization of RDFS/OWL models, with a reference engine."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE", "LICENSE-CC-BY-4.0.md"]
+authors = [
+    { name = "Marek Suchánek", email = "marek.suchanek@fit.cvut.cz" },
+    { name = "Jan Pecka", email = "peckaja2@fit.cvut.cz" },
+]
+keywords = [
+    "ontology", "visualization", "rdf", "owl", "rdfs", "sparql",
+    "semantic-web", "visual-notation",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "rdflib>=7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+docs = [
+    "pylode>=3.6",
+]
+
+[project.urls]
+Repository = "https://github.com/MarekSuchanek/vizbind"
+Issues = "https://github.com/MarekSuchanek/vizbind/issues"
+
+[project.scripts]
+vizbind = "vizbind.cli:main"
+
+[tool.setuptools]
+packages = ["vizbind", "vizbind.backends"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

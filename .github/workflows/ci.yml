@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Test
+        run: pytest -q
+
+  reproduce:
+    # The paper's numbers are generated, not typed. This job proves the committed
+    # results/ and figures/ still match what the code produces from the committed
+    # inputs.
+    #
+    # Two things are deliberately NOT compared, because they vary between machines
+    # without anything having actually changed:
+    #   * wall-clock timings in results/ (median seconds, hardware-dependent);
+    #   * the rendered .pdf figures (Graphviz embeds a creation timestamp).
+    # The .dot / .mmd / .cyto.json figure sources ARE compared exactly, and they
+    # carry the full diagram structure, so real drift is still caught.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Regenerate figures and results
+        run: |
+          python scripts/build_figures.py
+          python scripts/evaluate.py
+
+      - name: Figure sources must be byte-identical
+        run: |
+          if ! git diff --quiet -- 'figures/*.dot' 'figures/*.mmd' 'figures/*.cyto.json'; then
+            echo "::error::Regenerated figure sources differ from the committed ones."
+            git diff -- 'figures/*.dot' 'figures/*.mmd' 'figures/*.cyto.json'
+            exit 1
+          fi
+          echo "Figure sources match a fresh run."
+
+      - name: Reported numbers must be unchanged, ignoring timings
+        run: |
+          norm() { sed -E 's/[0-9]+\.[0-9]+/<time>/g' "$1"; }
+          git show HEAD:results/tables.tex > /tmp/tables-committed.tex
+          if ! diff -u <(norm /tmp/tables-committed.tex) <(norm results/tables.tex); then
+            echo "::error::A number reported in the paper changed. Update the paper, or fix the cause."
+            exit 1
+          fi
+          echo "All reported counts, coverage and binding numbers match a fresh run."

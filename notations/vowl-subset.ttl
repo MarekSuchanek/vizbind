@@ -1,0 +1,292 @@
+@prefix vb:    <https://w3id.org/vizbind#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vowl:  <https://example.org/notation/vowl-subset#> .
+
+# ---------------------------------------------------------------------------
+# A VOWL-subset notation expressed as VizBind bindings.
+#
+# Scope (see the paper's coverage table): class nodes, datatype nodes, object
+# and datatype properties rendered as boxes ON the edge (VOWL models a property
+# as a node between its domain and range), rdfs:subClassOf, owl:Thing, property
+# characteristics, and cardinality restrictions.
+#
+# Out of scope by construction: VOWL's force-directed layout and its
+# node-diameter-by-instance-count rule, both of which are procedural rather
+# than declarative. Colours follow the VOWL specification.
+# ---------------------------------------------------------------------------
+
+vowl:VowlSubset a vb:Notation ;
+    rdfs:label "VOWL (subset)"@en ;
+    vb:hasBinding
+        vowl:ClassBinding ,
+        vowl:ExternalClassBinding ,
+        vowl:ThingBinding ,
+        vowl:DatatypeBinding ,
+        vowl:ObjectPropertyNode ,
+        vowl:ObjectPropertyDomainEdge ,
+        vowl:ObjectPropertyRangeEdge ,
+        vowl:DatatypePropertyNode ,
+        vowl:DatatypePropertyDomainEdge ,
+        vowl:DatatypePropertyRangeEdge ,
+        vowl:SubClassOfEdge ,
+        vowl:FunctionalDecorator ,
+        vowl:MinCardinalityDecorator ,
+        vowl:MaxCardinalityDecorator .
+
+#################################################################
+#    Classes and datatypes
+#################################################################
+
+vowl:ClassBinding a vb:Binding ;
+    rdfs:comment "Every named OWL class becomes a light-blue circle."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?c ?label WHERE {
+              ?c a owl:Class .
+              FILTER (isIRI(?c))
+              OPTIONAL { ?c rdfs:label ?label FILTER (lang(?label) = "en" || lang(?label) = "") }
+            }""" ] ;
+    vb:produce [ a vb:Node ;
+        vb:id "{?c}" ;
+        vb:labelTemplate "{coalesce(?label, localName(?c))}" ;
+        vb:nodeShape vb:Circle ;
+        vb:fill "#AACCFF" ;
+        vb:stroke "#3366CC" ] .
+
+vowl:ExternalClassBinding a vb:Binding ;
+    rdfs:comment """A class referenced as a domain or range but not declared in the
+document under inspection is, in VOWL's terms, an external class and is drawn in a
+darker blue. Lower priority than ClassBinding, so a locally declared class keeps the
+standard colour."""@en ;
+    vb:priority 5 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT DISTINCT ?x WHERE {
+              {
+                ?p a owl:ObjectProperty ; rdfs:domain ?x .
+              } UNION {
+                ?p a owl:ObjectProperty ; rdfs:range ?x .
+              } UNION {
+                ?p a owl:DatatypeProperty ; rdfs:domain ?x .
+              } UNION {
+                ?s rdfs:subClassOf ?x .
+              } UNION {
+                ?x rdfs:subClassOf ?o .
+              }
+              FILTER (isIRI(?x))
+              FILTER NOT EXISTS { ?x a owl:Class }
+            }""" ] ;
+    vb:produce [ a vb:Node ;
+        vb:id "{?x}" ;
+        vb:labelTemplate "{localName(?x)}" ;
+        vb:nodeShape vb:Circle ;
+        vb:fill "#3366CC" ;
+        vb:stroke "#1A3D80" ] .
+
+vowl:ThingBinding a vb:Binding ;
+    rdfs:comment "owl:Thing is drawn as a dashed, unfilled circle. Higher priority than ClassBinding, which it overrides attribute-wise."@en ;
+    vb:priority 20 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?t WHERE {
+              ?s ?p ?t .
+              FILTER (?t = owl:Thing)
+            }""" ] ;
+    vb:produce [ a vb:Node ;
+        vb:id "{?t}" ;
+        vb:labelTemplate "Thing" ;
+        vb:nodeShape vb:Circle ;
+        vb:fill "#FFFFFF" ;
+        vb:lineStyle vb:Dashed ] .
+
+vowl:DatatypeBinding a vb:Binding ;
+    rdfs:comment "Datatypes appearing as a range become yellow rectangles."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT DISTINCT ?d WHERE {
+              ?p a owl:DatatypeProperty ; rdfs:range ?d .
+            }""" ] ;
+    vb:produce [ a vb:Node ;
+        vb:id "{?d}" ;
+        vb:labelTemplate "{localName(?d)}" ;
+        vb:nodeShape vb:Rectangle ;
+        vb:fill "#FFCC33" ;
+        vb:stroke "#B38A00" ] .
+
+#################################################################
+#    Object properties: a node plus two edges
+#################################################################
+
+vowl:ObjectPropertyNode a vb:Binding ;
+    rdfs:comment "VOWL renders an object property as a blue box placed between domain and range."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?label WHERE {
+              ?p a owl:ObjectProperty ; rdfs:domain ?d ; rdfs:range ?r .
+              FILTER (isIRI(?d) && isIRI(?r))
+              OPTIONAL { ?p rdfs:label ?label FILTER (lang(?label) = "en" || lang(?label) = "") }
+            }""" ] ;
+    vb:produce [ a vb:Node ;
+        vb:id "{?p}" ;
+        vb:labelTemplate "{coalesce(?label, localName(?p))}" ;
+        vb:nodeShape vb:Rectangle ;
+        vb:fill "#AACCFF" ;
+        vb:stroke "#3366CC" ] .
+
+vowl:ObjectPropertyDomainEdge a vb:Binding ;
+    rdfs:comment "Undirected link from the domain class to the property box."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?d WHERE {
+              ?p a owl:ObjectProperty ; rdfs:domain ?d ; rdfs:range ?r .
+              FILTER (isIRI(?d) && isIRI(?r))
+            }""" ] ;
+    vb:produce [ a vb:Edge ;
+        vb:id "{?p}-domain" ;
+        vb:from "{?d}" ;
+        vb:to "{?p}" ;
+        vb:arrowHead vb:NoArrow ;
+        vb:stroke "#3366CC" ] .
+
+vowl:ObjectPropertyRangeEdge a vb:Binding ;
+    rdfs:comment "Directed link from the property box to the range class."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?r WHERE {
+              ?p a owl:ObjectProperty ; rdfs:domain ?d ; rdfs:range ?r .
+              FILTER (isIRI(?d) && isIRI(?r))
+            }""" ] ;
+    vb:produce [ a vb:Edge ;
+        vb:id "{?p}-range" ;
+        vb:from "{?p}" ;
+        vb:to "{?r}" ;
+        vb:arrowHead vb:FilledTriangle ;
+        vb:stroke "#3366CC" ] .
+
+#################################################################
+#    Datatype properties: a green node plus two edges
+#################################################################
+
+vowl:DatatypePropertyNode a vb:Binding ;
+    rdfs:comment "VOWL renders a datatype property as a green box."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?label WHERE {
+              ?p a owl:DatatypeProperty ; rdfs:domain ?d ; rdfs:range ?r .
+              FILTER (isIRI(?d) && isIRI(?r))
+              OPTIONAL { ?p rdfs:label ?label FILTER (lang(?label) = "en" || lang(?label) = "") }
+            }""" ] ;
+    vb:produce [ a vb:Node ;
+        vb:id "{?p}" ;
+        vb:labelTemplate "{coalesce(?label, localName(?p))}" ;
+        vb:nodeShape vb:Rectangle ;
+        vb:fill "#99CC66" ;
+        vb:stroke "#5C8A2E" ] .
+
+vowl:DatatypePropertyDomainEdge a vb:Binding ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?d WHERE {
+              ?p a owl:DatatypeProperty ; rdfs:domain ?d ; rdfs:range ?r .
+              FILTER (isIRI(?d) && isIRI(?r))
+            }""" ] ;
+    vb:produce [ a vb:Edge ;
+        vb:id "{?p}-domain" ;
+        vb:from "{?d}" ;
+        vb:to "{?p}" ;
+        vb:arrowHead vb:NoArrow ;
+        vb:stroke "#5C8A2E" ] .
+
+vowl:DatatypePropertyRangeEdge a vb:Binding ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?r WHERE {
+              ?p a owl:DatatypeProperty ; rdfs:domain ?d ; rdfs:range ?r .
+              FILTER (isIRI(?d) && isIRI(?r))
+            }""" ] ;
+    vb:produce [ a vb:Edge ;
+        vb:id "{?p}-range" ;
+        vb:from "{?p}" ;
+        vb:to "{?r}" ;
+        vb:arrowHead vb:FilledTriangle ;
+        vb:stroke "#5C8A2E" ] .
+
+#################################################################
+#    Subclass relation
+#################################################################
+
+vowl:SubClassOfEdge a vb:Binding ;
+    rdfs:comment "rdfs:subClassOf is a dashed edge labelled 'Subclass of'. Anonymous superclasses (restrictions) are excluded."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?sub ?super WHERE {
+              ?sub rdfs:subClassOf ?super .
+              FILTER (isIRI(?sub) && isIRI(?super))
+            }""" ] ;
+    vb:produce [ a vb:Edge ;
+        vb:id "{?sub}-subClassOf-{?super}" ;
+        vb:from "{?sub}" ;
+        vb:to "{?super}" ;
+        vb:labelTemplate "Subclass of" ;
+        vb:lineStyle vb:Dashed ;
+        vb:arrowHead vb:FilledTriangle ;
+        vb:stroke "#666666" ] .
+
+#################################################################
+#    Characteristics and cardinality
+#################################################################
+
+vowl:FunctionalDecorator a vb:Binding ;
+    rdfs:comment "Functional properties carry a 'functional' marker on the property box."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p WHERE {
+              ?p a owl:FunctionalProperty ; rdfs:domain ?d ; rdfs:range ?r .
+              FILTER (isIRI(?d) && isIRI(?r))
+            }""" ] ;
+    vb:produce [ a vb:Decorator ;
+        vb:target "{?p}" ;
+        vb:textTemplate "functional" ;
+        vb:position vb:Above ] .
+
+vowl:MinCardinalityDecorator a vb:Binding ;
+    rdfs:comment "owl:minCardinality on a restriction annotates the property's range edge."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?card WHERE {
+              ?c rdfs:subClassOf ?restriction .
+              ?restriction a owl:Restriction ;
+                           owl:onProperty ?p ;
+                           owl:minCardinality ?card .
+            }""" ] ;
+    vb:produce [ a vb:Decorator ;
+        vb:target "{?p}-range" ;
+        vb:textTemplate "{?card}..*" ;
+        vb:position vb:AtTarget ] .
+
+vowl:MaxCardinalityDecorator a vb:Binding ;
+    rdfs:comment "owl:maxCardinality on a restriction annotates the property's range edge."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?card WHERE {
+              ?c rdfs:subClassOf ?restriction .
+              ?restriction a owl:Restriction ;
+                           owl:onProperty ?p ;
+                           owl:maxCardinality ?card .
+            }""" ] ;
+    vb:produce [ a vb:Decorator ;
+        vb:target "{?p}-range" ;
+        vb:textTemplate "0..{?card}" ;
+        vb:position vb:AtTarget ] .

@@ -1,0 +1,64 @@
+cff-version: 1.2.0
+title: "VizBind: a declarative RDF vocabulary for notation-independent visualization of RDFS/OWL models"
+message: "If you use this software or vocabulary, please cite both the software (this file) and the accompanying paper (see preferred-citation)."
+type: software
+authors:
+  - given-names: Marek
+    family-names: Suchánek
+    email: marek.suchanek@fit.cvut.cz
+    orcid: "https://orcid.org/0000-0001-7525-9218"
+    affiliation: "Faculty of Information Technology, Czech Technical University in Prague"
+  - given-names: Jan
+    family-names: Pecka
+    email: peckaja2@fit.cvut.cz
+    orcid: "https://orcid.org/0000-0002-8173-3913"
+    affiliation: "Faculty of Information Technology, Czech Technical University in Prague"
+repository-code: "https://github.com/MarekSuchanek/vizbind"
+abstract: >-
+  VizBind is a declarative RDF vocabulary that describes an ontology visual
+  notation as data rather than as tool code. A notation is a set of binding
+  rules, each separating selection of model constructs (via SPARQL), mapping to
+  abstract visual constructs, and engine-agnostic styling, with priority-based
+  conflict resolution. The same RDFS/OWL model renders into different notations
+  by swapping one file, and the same notation renders through different engines.
+  This repository contains the vocabulary, two notations (a VOWL subset and a
+  contrasting UML-style notation), a proof-of-concept Python engine with
+  Graphviz, Mermaid and Cytoscape.js adapters, and the evaluation scripts that
+  generate every figure and number reported in the accompanying paper.
+keywords:
+  - ontology visualization
+  - visual notation
+  - RDF
+  - OWL
+  - RDFS
+  - SPARQL
+  - declarative specification
+  - knowledge engineering
+  - semantic web
+license: Apache-2.0
+version: 0.1.0
+# TODO(Marek): set to the release date you actually tag.
+date-released: "2026-09-11"
+# TODO(Marek): after the first Zenodo-archived release, add the version DOI here:
+# doi: "10.5281/zenodo.XXXXXXX"
+
+preferred-citation:
+  type: conference-paper
+  title: "Binding Ontologies to Notation: A Declarative RDF Vocabulary for Notation-Independent Visualisation of RDFS/OWL Models"
+  authors:
+    - given-names: Marek
+      family-names: Suchánek
+      orcid: "https://orcid.org/0000-0001-7525-9218"
+    - given-names: Jan
+      family-names: Pecka
+      orcid: "https://orcid.org/0000-0002-8173-3913"
+  collection-title: "Proceedings of the 18th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2026) - Volume 2: KEOD"
+  conference:
+    name: "International Conference on Knowledge Engineering and Ontology Development (KEOD 2026)"
+  publisher:
+    name: SCITEPRESS
+  year: 2026
+  # TODO(Marek): fill in once the proceedings are published.
+  # doi: "10.5220/XXXXXXXXXXXXXXX"
+  # start: 0
+  # end: 0

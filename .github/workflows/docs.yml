@@ -1,0 +1,79 @@
+name: Docs
+
+# Publishes the vocabulary site to GitHub Pages. This is what
+# https://w3id.org/vizbind redirects to, so the paths in w3id/.htaccess and the
+# files this workflow produces have to stay in step.
+#
+# Repository setting required once: Settings -> Pages -> Source: "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "vocab/**"
+      - "notations/**"
+      - "scripts/build_docs.py"
+      - ".github/workflows/docs.yml"
+      - "pyproject.toml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[docs]"
+
+      - name: Build the site
+        run: python scripts/build_docs.py
+
+      - name: Check every file the w3id redirects point at exists
+        run: |
+          missing=0
+          for f in index.html vizbind.ttl vizbind.rdf vizbind.jsonld vizbind-vowl.svg; do
+            if [ -s "_site/$f" ]; then
+              printf '  ok       %-20s %s bytes\n' "$f" "$(wc -c < "_site/$f")"
+            else
+              printf '  MISSING  %s\n' "$f"; missing=1
+            fi
+          done
+          [ "$missing" -eq 0 ] || {
+            echo "::error::A file referenced by w3id/.htaccess was not built."
+            exit 1
+          }
+
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

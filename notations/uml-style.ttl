@@ -1,0 +1,189 @@
+@prefix vb:   <https://w3id.org/vizbind#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix uml:  <https://example.org/notation/uml-style#> .
+
+# ---------------------------------------------------------------------------
+# A compact UML-class-diagram-style notation, expressed against the same
+# metamodel as the VOWL subset and applied to the same subject models.
+#
+# The contrast with VOWL is structural rather than cosmetic, which is the point
+# of the notation-independence claim:
+#
+#   construct              VOWL subset                 UML style
+#   ---------------------  --------------------------  ----------------------
+#   owl:ObjectProperty     a Node between two Edges    a single Edge
+#   owl:DatatypeProperty   a Node between two Edges    a Compartment entry
+#   datatype (xsd:*)       a Node                      not drawn at all
+#   rdfs:subClassOf        dashed edge, labelled       hollow-triangle edge
+#
+# Both notations are consumed by the same engine and the same back-ends; only
+# this document differs.
+# ---------------------------------------------------------------------------
+
+uml:UmlStyle a vb:Notation ;
+    rdfs:label "UML class style"@en ;
+    vb:hasBinding
+        uml:ClassBinding ,
+        uml:ExternalClassBinding ,
+        uml:AttributeCompartment ,
+        uml:ObjectPropertyEdge ,
+        uml:SubClassOfEdge ,
+        uml:FunctionalDecorator ,
+        uml:MinCardinalityDecorator ,
+        uml:MaxCardinalityDecorator .
+
+#################################################################
+#    Classes and attributes
+#################################################################
+
+uml:ClassBinding a vb:Binding ;
+    rdfs:comment "A named OWL class becomes a white box carrying an attributes compartment."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?c ?label WHERE {
+              ?c a owl:Class .
+              FILTER (isIRI(?c))
+              OPTIONAL { ?c rdfs:label ?label FILTER (lang(?label) = "en" || lang(?label) = "") }
+            }""" ] ;
+    vb:produce [ a vb:Node ;
+        vb:id "{?c}" ;
+        vb:labelTemplate "{coalesce(?label, localName(?c))}" ;
+        vb:nodeShape vb:Rectangle ;
+        vb:fill "#FFFFFF" ;
+        vb:stroke "#000000" ] .
+
+uml:ExternalClassBinding a vb:Binding ;
+    rdfs:comment """A class referenced but not declared locally is drawn with a dashed
+border, the usual UML convention for an imported type. The same model constructs that
+VOWL paints a darker blue are here given a different treatment entirely -- the two
+notations disagree about form, not only colour."""@en ;
+    vb:priority 5 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT DISTINCT ?x WHERE {
+              {
+                ?p a owl:ObjectProperty ; rdfs:domain ?x .
+              } UNION {
+                ?p a owl:ObjectProperty ; rdfs:range ?x .
+              } UNION {
+                ?p a owl:DatatypeProperty ; rdfs:domain ?x .
+              } UNION {
+                ?s rdfs:subClassOf ?x .
+              } UNION {
+                ?x rdfs:subClassOf ?o .
+              }
+              FILTER (isIRI(?x))
+              FILTER NOT EXISTS { ?x a owl:Class }
+            }""" ] ;
+    vb:produce [ a vb:Node ;
+        vb:id "{?x}" ;
+        vb:labelTemplate "{localName(?x)}" ;
+        vb:nodeShape vb:Rectangle ;
+        vb:fill "#FFFFFF" ;
+        vb:stroke "#000000" ;
+        vb:lineStyle vb:Dashed ] .
+
+uml:AttributeCompartment a vb:Binding ;
+    rdfs:comment "A datatype property is NOT a node here: it is an attribute line inside its domain class."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?c ?p ?range ?label WHERE {
+              ?p a owl:DatatypeProperty ; rdfs:domain ?c ; rdfs:range ?range .
+              FILTER (isIRI(?c) && isIRI(?range))
+              OPTIONAL { ?p rdfs:label ?label FILTER (lang(?label) = "en" || lang(?label) = "") }
+            }""" ] ;
+    vb:produce [ a vb:Compartment ;
+        vb:owner "{?c}" ;
+        vb:slot "attributes" ;
+        vb:entryTemplate "{coalesce(?label, localName(?p))} : {localName(?range)}" ] .
+
+#################################################################
+#    Associations
+#################################################################
+
+uml:ObjectPropertyEdge a vb:Binding ;
+    rdfs:comment "An object property is a single directed association, not a node."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?d ?r ?label WHERE {
+              ?p a owl:ObjectProperty ; rdfs:domain ?d ; rdfs:range ?r .
+              FILTER (isIRI(?d) && isIRI(?r))
+              OPTIONAL { ?p rdfs:label ?label FILTER (lang(?label) = "en" || lang(?label) = "") }
+            }""" ] ;
+    vb:produce [ a vb:Edge ;
+        vb:id "{?p}" ;
+        vb:from "{?d}" ;
+        vb:to "{?r}" ;
+        vb:labelTemplate "{coalesce(?label, localName(?p))}" ;
+        vb:arrowHead vb:OpenArrow ;
+        vb:stroke "#000000" ] .
+
+uml:SubClassOfEdge a vb:Binding ;
+    rdfs:comment "rdfs:subClassOf becomes a UML generalization: a solid edge with a hollow triangle."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?sub ?super WHERE {
+              ?sub rdfs:subClassOf ?super .
+              FILTER (isIRI(?sub) && isIRI(?super))
+            }""" ] ;
+    vb:produce [ a vb:Edge ;
+        vb:id "{?sub}-gen-{?super}" ;
+        vb:from "{?sub}" ;
+        vb:to "{?super}" ;
+        vb:arrowHead vb:HollowTriangle ;
+        vb:stroke "#000000" ] .
+
+#################################################################
+#    Characteristics and multiplicity
+#################################################################
+
+uml:FunctionalDecorator a vb:Binding ;
+    rdfs:comment "A functional object property is marked 1 at its target end."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p WHERE {
+              ?p a owl:FunctionalProperty , owl:ObjectProperty ;
+                 rdfs:domain ?d ; rdfs:range ?r .
+              FILTER (isIRI(?d) && isIRI(?r))
+            }""" ] ;
+    vb:produce [ a vb:Decorator ;
+        vb:target "{?p}" ;
+        vb:textTemplate "1" ;
+        vb:position vb:AtTarget ] .
+
+uml:MinCardinalityDecorator a vb:Binding ;
+    rdfs:comment "owl:minCardinality becomes a UML multiplicity at the association's target end."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?card WHERE {
+              ?c rdfs:subClassOf ?restriction .
+              ?restriction a owl:Restriction ;
+                           owl:onProperty ?p ;
+                           owl:minCardinality ?card .
+            }""" ] ;
+    vb:produce [ a vb:Decorator ;
+        vb:target "{?p}" ;
+        vb:textTemplate "{?card}..*" ;
+        vb:position vb:AtTarget ] .
+
+uml:MaxCardinalityDecorator a vb:Binding ;
+    rdfs:comment "owl:maxCardinality becomes a UML multiplicity at the association's target end."@en ;
+    vb:priority 10 ;
+    vb:select [ a vb:SparqlSelection ;
+        vb:query """
+            SELECT ?p ?card WHERE {
+              ?c rdfs:subClassOf ?restriction .
+              ?restriction a owl:Restriction ;
+                           owl:onProperty ?p ;
+                           owl:maxCardinality ?card .
+            }""" ] ;
+    vb:produce [ a vb:Decorator ;
+        vb:target "{?p}" ;
+        vb:textTemplate "0..{?card}" ;
+        vb:position vb:AtTarget ] .

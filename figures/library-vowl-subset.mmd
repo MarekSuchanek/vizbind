@@ -1,0 +1,55 @@
+graph LR
+  n0["date"]
+  style n0 fill:#FFCC33
+  n1["string"]
+  style n1 fill:#FFCC33
+  n2(("Author"))
+  style n2 fill:#AACCFF
+  n3(("Book"))
+  style n3 fill:#AACCFF
+  n4(("Journal"))
+  style n4 fill:#AACCFF
+  n5(("Library"))
+  style n5 fill:#AACCFF
+  n6(("Member"))
+  style n6 fill:#AACCFF
+  n7(("Person"))
+  style n7 fill:#AACCFF
+  n8(("Publication"))
+  style n8 fill:#AACCFF
+  n9["birth date"]
+  style n9 fill:#99CC66
+  n10["borrows"]
+  style n10 fill:#AACCFF
+  n11["has author"]
+  style n11 fill:#AACCFF
+  n12["held by<br/>«functional»"]
+  style n12 fill:#AACCFF
+  n13["isbn<br/>«functional»"]
+  style n13 fill:#99CC66
+  n14["issn"]
+  style n14 fill:#99CC66
+  n15["name"]
+  style n15 fill:#99CC66
+  n16["title"]
+  style n16 fill:#99CC66
+  n2 -->|"Subclass of"| n7
+  n3 -->|"Subclass of"| n8
+  n4 -->|"Subclass of"| n8
+  n6 -->|"Subclass of"| n7
+  n7 --- n9
+  n9 --> n0
+  n6 --- n10
+  n10 -->|"0..5"| n3
+  n8 --- n11
+  n11 -->|"1..*"| n2
+  n3 --- n12
+  n12 --> n5
+  n3 --- n13
+  n13 --> n1
+  n4 --- n14
+  n14 --> n1
+  n7 --- n15
+  n15 --> n1
+  n8 --- n16
+  n16 --> n1

@@ -1,0 +1,22 @@
+VizBind
+Copyright 2026 Marek Suchánek and Jan Pecka
+Faculty of Information Technology, Czech Technical University in Prague
+
+This product includes software developed at the Faculty of Information
+Technology, Czech Technical University in Prague, with support from the
+Student Summer Research Program, and in collaboration with the Normalized
+Systems Laboratory (NSLab) at CTU in Prague.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+The binding vocabulary and the notation documents (vocab/, notations/ and
+examples/library.ttl) are additionally available under the Creative Commons
+Attribution 4.0 International licence. See LICENSE-CC-BY-4.0.md.
+
+Third-party ontologies redistributed under examples/vendor/ are covered by
+their own licences and are not subject to the above. See
+examples/vendor/NOTICE.md.

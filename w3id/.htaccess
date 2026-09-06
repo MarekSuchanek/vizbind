@@ -1,0 +1,45 @@
+# VizBind vocabulary — https://w3id.org/vizbind
+#
+# THIS FILE IS NOT USED BY THIS REPOSITORY.
+#
+# It is kept here under version control so it stays in step with the site that
+# .github/workflows/docs.yml publishes. To take effect it must be contributed to
+# the w3id.org registry as `vizbind/.htaccess`:
+#
+#   1. Fork https://github.com/perma-id/w3id.org
+#   2. Add this file as vizbind/.htaccess
+#   3. Open a pull request; a maintainer reviews and merges it
+#
+# VizBind uses a *hash* namespace (https://w3id.org/vizbind#Binding), so a client
+# strips the fragment and only ever requests https://w3id.org/vizbind. One rule
+# set therefore covers every term in the vocabulary.
+#
+# Content negotiation happens HERE, not on GitHub Pages: Pages serves static
+# files with fixed content types and cannot negotiate.
+
+Options +FollowSymLinks
+RewriteEngine on
+
+# --- RDF serializations -----------------------------------------------------
+
+RewriteCond %{HTTP_ACCEPT} text/turtle [OR]
+RewriteCond %{HTTP_ACCEPT} application/x-turtle [OR]
+RewriteCond %{HTTP_ACCEPT} text/n3
+RewriteRule ^$ https://mareksuchanek.github.io/vizbind/vizbind.ttl [R=302,L]
+
+RewriteCond %{HTTP_ACCEPT} application/rdf\+xml
+RewriteRule ^$ https://mareksuchanek.github.io/vizbind/vizbind.rdf [R=302,L]
+
+RewriteCond %{HTTP_ACCEPT} application/ld\+json [OR]
+RewriteCond %{HTTP_ACCEPT} application/json
+RewriteRule ^$ https://mareksuchanek.github.io/vizbind/vizbind.jsonld [R=302,L]
+
+# --- Direct requests for a particular serialization --------------------------
+
+RewriteRule ^vizbind\.ttl$    https://mareksuchanek.github.io/vizbind/vizbind.ttl    [R=302,L]
+RewriteRule ^vizbind\.rdf$    https://mareksuchanek.github.io/vizbind/vizbind.rdf    [R=302,L]
+RewriteRule ^vizbind\.jsonld$ https://mareksuchanek.github.io/vizbind/vizbind.jsonld [R=302,L]
+
+# --- Everything else (browsers) gets the documentation -----------------------
+
+RewriteRule ^$ https://mareksuchanek.github.io/vizbind/ [R=302,L]

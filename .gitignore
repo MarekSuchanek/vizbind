@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Generated vocabulary site (built by scripts/build_docs.py, published by CI)
+_site/

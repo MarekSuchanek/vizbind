@@ -1,0 +1,311 @@
+@prefix vb:    <https://w3id.org/vizbind#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix vann:  <http://purl.org/vocab/vann/> .
+@prefix sdo:   <https://schema.org/> .
+
+#################################################################
+#    Ontology
+#################################################################
+
+<https://w3id.org/vizbind> a owl:Ontology ;
+    dct:title "VizBind: A Visualization-Binding Metamodel for RDFS/OWL"@en ;
+    dct:description """VizBind describes a visual notation as data. A vb:Notation is a
+set of vb:Binding rules; each rule SELECTS constructs of a subject model (via SPARQL),
+MAPS each match to an abstract visual construct (node, edge, compartment, decorator),
+and STYLES that construct with engine-agnostic attributes. Notations are therefore
+shareable, comparable and interchangeable configurations rather than tool code."""@en ;
+    dct:created "2026-07-16"^^xsd:date ;
+    dct:modified "2026-09-06"^^xsd:date ;
+    dct:creator [ a sdo:Person ;
+        sdo:name "Marek Suchánek" ;
+        sdo:identifier <https://orcid.org/0000-0001-7525-9218> ;
+        sdo:email "marek.suchanek@fit.cvut.cz" ] ;
+    dct:publisher [ a sdo:Organization ;
+        sdo:name "Faculty of Information Technology, Czech Technical University in Prague" ;
+        sdo:url <https://fit.cvut.cz/> ] ;
+    dct:license <https://creativecommons.org/licenses/by/4.0/> ;
+    vann:preferredNamespacePrefix "vb" ;
+    vann:preferredNamespaceUri "https://w3id.org/vizbind#" ;
+    owl:versionInfo "0.1.0" .
+
+#################################################################
+#    Notation and Binding
+#################################################################
+
+vb:Notation a owl:Class ;
+    rdfs:label "Notation"@en ;
+    rdfs:comment "A named, self-contained visual language: a set of binding rules that together map a subject model to a diagram."@en .
+
+vb:Binding a owl:Class ;
+    rdfs:label "Binding"@en ;
+    rdfs:comment "A single rule binding a selection of model constructs to a visual construct template."@en .
+
+vb:hasBinding a owl:ObjectProperty ;
+    rdfs:label "has binding"@en ;
+    rdfs:domain vb:Notation ;
+    rdfs:range vb:Binding ;
+    rdfs:comment "Associates a notation with one of its binding rules."@en .
+
+vb:extends a owl:ObjectProperty ;
+    rdfs:label "extends"@en ;
+    rdfs:domain vb:Notation ;
+    rdfs:range vb:Notation ;
+    rdfs:comment "Declares that a notation inherits the bindings of another notation. Inherited bindings may be overridden by priority."@en .
+
+vb:select a owl:ObjectProperty ;
+    rdfs:label "select"@en ;
+    rdfs:domain vb:Binding ;
+    rdfs:range vb:Selection ;
+    rdfs:comment "The selection determining which model constructs this binding applies to."@en .
+
+vb:produce a owl:ObjectProperty ;
+    rdfs:label "produce"@en ;
+    rdfs:domain vb:Binding ;
+    rdfs:range vb:VisualConstruct ;
+    rdfs:comment "The visual construct template instantiated once per selection match."@en .
+
+vb:priority a owl:DatatypeProperty ;
+    rdfs:label "priority"@en ;
+    rdfs:domain vb:Binding ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "Conflict-resolution weight. When several bindings assign the same attribute of the same visual construct, the assignment from the binding with the highest priority prevails. Default 0."@en .
+
+#################################################################
+#    Selection
+#################################################################
+
+vb:Selection a owl:Class ;
+    rdfs:label "Selection"@en ;
+    rdfs:comment "An abstract specification of which constructs of the subject model a binding applies to."@en .
+
+vb:SparqlSelection a owl:Class ;
+    rdfs:subClassOf vb:Selection ;
+    rdfs:label "SPARQL Selection"@en ;
+    rdfs:comment "A selection expressed as a SPARQL SELECT query over the subject model. Each result row yields one visual construct."@en .
+
+vb:ShaclSelection a owl:Class ;
+    rdfs:subClassOf vb:Selection ;
+    rdfs:label "SHACL Selection"@en ;
+    rdfs:comment "A selection expressed as a SHACL node shape; matching focus nodes are bound to the variable named by vb:focusVar."@en .
+
+vb:query a owl:DatatypeProperty ;
+    rdfs:label "query"@en ;
+    rdfs:domain vb:SparqlSelection ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The SPARQL SELECT query text. Its projected variables are available to templates of the produced construct."@en .
+
+vb:shape a owl:ObjectProperty ;
+    rdfs:label "shape (SHACL)"@en ;
+    rdfs:domain vb:ShaclSelection ;
+    rdfs:comment "The SHACL node shape whose focus nodes constitute the selection."@en .
+
+vb:focusVar a owl:DatatypeProperty ;
+    rdfs:label "focus variable"@en ;
+    rdfs:domain vb:ShaclSelection ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Name of the template variable to which a matching SHACL focus node is bound."@en .
+
+vb:Selection owl:disjointUnionOf ( vb:SparqlSelection vb:ShaclSelection ) .
+
+#################################################################
+#    Abstract visual constructs
+#################################################################
+
+vb:VisualConstruct a owl:Class ;
+    rdfs:label "Visual Construct"@en ;
+    rdfs:comment "An abstract, engine-independent diagram element. Back-end adapters realise it concretely."@en .
+
+vb:Node a owl:Class ;
+    rdfs:subClassOf vb:VisualConstruct ;
+    rdfs:label "Node"@en ;
+    rdfs:comment "A standalone diagram vertex."@en .
+
+vb:Edge a owl:Class ;
+    rdfs:subClassOf vb:VisualConstruct ;
+    rdfs:label "Edge"@en ;
+    rdfs:comment "A connection between two nodes."@en .
+
+vb:Compartment a owl:Class ;
+    rdfs:subClassOf vb:VisualConstruct ;
+    rdfs:label "Compartment"@en ;
+    rdfs:comment "A textual entry rendered inside a slot of an owning node, e.g. an attribute line of a UML class box."@en .
+
+vb:Decorator a owl:Class ;
+    rdfs:subClassOf vb:VisualConstruct ;
+    rdfs:label "Decorator"@en ;
+    rdfs:comment "An annotation attached to an existing node or edge, e.g. a cardinality or a property characteristic marker."@en .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vb:Node vb:Edge vb:Compartment vb:Decorator ) .
+
+#################################################################
+#    Construct identity and labelling
+#################################################################
+
+vb:id a owl:DatatypeProperty ;
+    rdfs:label "id"@en ;
+    rdfs:domain vb:VisualConstruct ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Template for the identity of the produced construct. Two constructs instantiated with the same id denote the same diagram element and are merged under the conflict-resolution rules."@en .
+
+vb:labelTemplate a owl:DatatypeProperty ;
+    rdfs:label "label template"@en ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Template for the visible label of a node or edge."@en .
+
+#################################################################
+#    Node style
+#################################################################
+
+vb:nodeShape a owl:ObjectProperty ;
+    rdfs:label "node shape"@en ;
+    rdfs:domain vb:Node ;
+    rdfs:range vb:Shape ;
+    rdfs:comment "The geometric form of a node."@en .
+
+vb:fill a owl:DatatypeProperty ;
+    rdfs:label "fill"@en ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Fill colour as an sRGB hex string, e.g. \"#AACCFF\"."@en .
+
+vb:stroke a owl:DatatypeProperty ;
+    rdfs:label "stroke"@en ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Outline/line colour as an sRGB hex string."@en .
+
+vb:lineStyle a owl:ObjectProperty ;
+    rdfs:label "line style"@en ;
+    rdfs:range vb:LineStyle ;
+    rdfs:comment "Stroke pattern of a node outline or an edge."@en .
+
+vb:fontStyle a owl:ObjectProperty ;
+    rdfs:label "font style"@en ;
+    rdfs:range vb:FontStyle ;
+    rdfs:comment "Typographic emphasis of a label."@en .
+
+#################################################################
+#    Edge style
+#################################################################
+
+vb:from a owl:DatatypeProperty ;
+    rdfs:label "from"@en ;
+    rdfs:domain vb:Edge ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Template resolving to the id of the source node."@en .
+
+vb:to a owl:DatatypeProperty ;
+    rdfs:label "to"@en ;
+    rdfs:domain vb:Edge ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Template resolving to the id of the target node."@en .
+
+vb:arrowHead a owl:ObjectProperty ;
+    rdfs:label "arrow head"@en ;
+    rdfs:domain vb:Edge ;
+    rdfs:range vb:ArrowHead ;
+    rdfs:comment "Terminator drawn at the target end of an edge."@en .
+
+vb:arrowTail a owl:ObjectProperty ;
+    rdfs:label "arrow tail"@en ;
+    rdfs:domain vb:Edge ;
+    rdfs:range vb:ArrowHead ;
+    rdfs:comment "Terminator drawn at the source end of an edge."@en .
+
+#################################################################
+#    Compartment
+#################################################################
+
+vb:owner a owl:DatatypeProperty ;
+    rdfs:label "owner"@en ;
+    rdfs:domain vb:Compartment ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Template resolving to the id of the node that contains this compartment entry."@en .
+
+vb:slot a owl:DatatypeProperty ;
+    rdfs:label "slot"@en ;
+    rdfs:domain vb:Compartment ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Name of the named region of the owning node into which the entry is placed, e.g. \"attributes\"."@en .
+
+vb:entryTemplate a owl:DatatypeProperty ;
+    rdfs:label "entry template"@en ;
+    rdfs:domain vb:Compartment ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Template for the text of one compartment entry."@en .
+
+#################################################################
+#    Decorator
+#################################################################
+
+vb:target a owl:DatatypeProperty ;
+    rdfs:label "target"@en ;
+    rdfs:domain vb:Decorator ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Template resolving to the id of the node or edge that this decorator annotates."@en .
+
+vb:textTemplate a owl:DatatypeProperty ;
+    rdfs:label "text template"@en ;
+    rdfs:domain vb:Decorator ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Template for the decorator's text."@en .
+
+vb:position a owl:ObjectProperty ;
+    rdfs:label "position"@en ;
+    rdfs:domain vb:Decorator ;
+    rdfs:range vb:Position ;
+    rdfs:comment "Placement hint for the decorator relative to its target."@en .
+
+#################################################################
+#    Enumerated style vocabularies
+#################################################################
+
+vb:Shape a owl:Class ; rdfs:label "Shape"@en ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf
+        ( vb:Circle vb:Ellipse vb:Rectangle vb:RoundedRectangle vb:Diamond vb:Hexagon vb:Note vb:Point ) ] .
+
+vb:Circle           a vb:Shape ; rdfs:label "circle"@en .
+vb:Ellipse          a vb:Shape ; rdfs:label "ellipse"@en .
+vb:Rectangle        a vb:Shape ; rdfs:label "rectangle"@en .
+vb:RoundedRectangle a vb:Shape ; rdfs:label "rounded rectangle"@en .
+vb:Diamond          a vb:Shape ; rdfs:label "diamond"@en .
+vb:Hexagon          a vb:Shape ; rdfs:label "hexagon"@en .
+vb:Note             a vb:Shape ; rdfs:label "note"@en .
+vb:Point            a vb:Shape ; rdfs:label "point"@en .
+
+vb:LineStyle a owl:Class ; rdfs:label "Line Style"@en ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf ( vb:Solid vb:Dashed vb:Dotted vb:Bold ) ] .
+
+vb:Solid  a vb:LineStyle ; rdfs:label "solid"@en .
+vb:Dashed a vb:LineStyle ; rdfs:label "dashed"@en .
+vb:Dotted a vb:LineStyle ; rdfs:label "dotted"@en .
+vb:Bold   a vb:LineStyle ; rdfs:label "bold"@en .
+
+vb:ArrowHead a owl:Class ; rdfs:label "Arrow Head"@en ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf
+        ( vb:NoArrow vb:OpenArrow vb:FilledTriangle vb:HollowTriangle vb:FilledDiamond vb:HollowDiamond ) ] .
+
+vb:NoArrow        a vb:ArrowHead ; rdfs:label "none"@en .
+vb:OpenArrow      a vb:ArrowHead ; rdfs:label "open arrow"@en .
+vb:FilledTriangle a vb:ArrowHead ; rdfs:label "filled triangle"@en .
+vb:HollowTriangle a vb:ArrowHead ; rdfs:label "hollow triangle"@en .
+vb:FilledDiamond  a vb:ArrowHead ; rdfs:label "filled diamond"@en .
+vb:HollowDiamond  a vb:ArrowHead ; rdfs:label "hollow diamond"@en .
+
+vb:FontStyle a owl:Class ; rdfs:label "Font Style"@en ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf ( vb:Normal vb:Italic vb:BoldFont ) ] .
+
+vb:Normal   a vb:FontStyle ; rdfs:label "normal"@en .
+vb:Italic   a vb:FontStyle ; rdfs:label "italic"@en .
+vb:BoldFont a vb:FontStyle ; rdfs:label "bold"@en .
+
+vb:Position a owl:Class ; rdfs:label "Position"@en ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf ( vb:AtSource vb:AtTarget vb:Middle vb:Above ) ] .
+
+vb:AtSource a vb:Position ; rdfs:label "at source"@en .
+vb:AtTarget a vb:Position ; rdfs:label "at target"@en .
+vb:Middle   a vb:Position ; rdfs:label "middle"@en .
+vb:Above    a vb:Position ; rdfs:label "above"@en .

@@ -1,0 +1,20 @@
+digraph G {
+  rankdir=TB;
+  graph [fontname="Times", splines=true, overlap=false, nodesep=0.35];
+  node  [fontname="Times", fontsize=10];
+  edge  [fontname="Times", fontsize=9, labeldistance=1.6];
+  "https://example.org/library#Author" [label="Author", shape=box, style="filled", fillcolor="#FFFFFF", color="#000000"];
+  "https://example.org/library#Book" [shape=record, label="{Book|isbn : string\l}", style="filled", fillcolor="#FFFFFF", color="#000000"];
+  "https://example.org/library#Journal" [shape=record, label="{Journal|issn : string\l}", style="filled", fillcolor="#FFFFFF", color="#000000"];
+  "https://example.org/library#Library" [label="Library", shape=box, style="filled", fillcolor="#FFFFFF", color="#000000"];
+  "https://example.org/library#Member" [label="Member", shape=box, style="filled", fillcolor="#FFFFFF", color="#000000"];
+  "https://example.org/library#Person" [shape=record, label="{Person|birth date : date\lname : string\l}", style="filled", fillcolor="#FFFFFF", color="#000000"];
+  "https://example.org/library#Publication" [shape=record, label="{Publication|title : string\l}", style="filled", fillcolor="#FFFFFF", color="#000000"];
+  "https://example.org/library#Author" -> "https://example.org/library#Person" [arrowhead=empty, color="#000000"];
+  "https://example.org/library#Book" -> "https://example.org/library#Publication" [arrowhead=empty, color="#000000"];
+  "https://example.org/library#Journal" -> "https://example.org/library#Publication" [arrowhead=empty, color="#000000"];
+  "https://example.org/library#Member" -> "https://example.org/library#Person" [arrowhead=empty, color="#000000"];
+  "https://example.org/library#Member" -> "https://example.org/library#Book" [label="borrows", arrowhead=vee, color="#000000", headlabel="0..5"];
+  "https://example.org/library#Publication" -> "https://example.org/library#Author" [label="has author", arrowhead=vee, color="#000000", headlabel="1..*"];
+  "https://example.org/library#Book" -> "https://example.org/library#Library" [label="held by", arrowhead=vee, color="#000000", headlabel="1"];
+}

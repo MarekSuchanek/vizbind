@@ -1,0 +1,303 @@
+{
+  "eq1": {
+    "rows": [
+      {
+        "element": "Class",
+        "mechanism": "ClassBinding",
+        "status": "subset",
+        "verified": true
+      },
+      {
+        "element": "External class",
+        "mechanism": "ExternalClassBinding",
+        "status": "subset",
+        "verified": true
+      },
+      {
+        "element": "owl:Thing",
+        "mechanism": "ThingBinding",
+        "status": "subset",
+        "verified": true
+      },
+      {
+        "element": "Datatype",
+        "mechanism": "DatatypeBinding",
+        "status": "subset",
+        "verified": true
+      },
+      {
+        "element": "Object property",
+        "mechanism": "ObjectPropertyNode",
+        "status": "subset",
+        "verified": true
+      },
+      {
+        "element": "Datatype property",
+        "mechanism": "DatatypePropertyNode",
+        "status": "subset",
+        "verified": true
+      },
+      {
+        "element": "rdfs:subClassOf",
+        "mechanism": "SubClassOfEdge",
+        "status": "subset",
+        "verified": true
+      },
+      {
+        "element": "Functional property",
+        "mechanism": "FunctionalDecorator",
+        "status": "subset",
+        "verified": true
+      },
+      {
+        "element": "Cardinality (min/max)",
+        "mechanism": "MinCardinalityDecorator",
+        "status": "subset",
+        "verified": true
+      },
+      {
+        "element": "Deprecated class",
+        "mechanism": "owl:deprecated",
+        "status": "expressible",
+        "verified": null
+      },
+      {
+        "element": "Equivalent classes",
+        "mechanism": "owl:equivalentClass",
+        "status": "expressible",
+        "verified": null
+      },
+      {
+        "element": "Disjoint classes",
+        "mechanism": "owl:disjointWith",
+        "status": "expressible",
+        "verified": null
+      },
+      {
+        "element": "Inverse property",
+        "mechanism": "owl:inverseOf",
+        "status": "expressible",
+        "verified": null
+      },
+      {
+        "element": "Union / intersection",
+        "mechanism": "owl:unionOf",
+        "status": "expressible",
+        "verified": null
+      },
+      {
+        "element": "Force-directed layout",
+        "mechanism": "engine concern",
+        "status": "procedural",
+        "verified": null
+      },
+      {
+        "element": "Node size by instance count",
+        "mechanism": "aggregate over data",
+        "status": "procedural",
+        "verified": null
+      }
+    ],
+    "tally": {
+      "expressible": 5,
+      "procedural": 2,
+      "subset": 9
+    },
+    "total": 16
+  },
+  "eq2": {
+    "avms_differ": true,
+    "engine_loc_changed": 0,
+    "engine_loc_total": 512,
+    "model_bytes_changed": 0,
+    "per_notation": {
+      "uml-style": {
+        "bindings": 8,
+        "digest": "3f36b4ab3e4a337a1878b498068192153e6a54d3742f6fa83ee8eb4d7cc351c2",
+        "edges": 7,
+        "nodes": 7,
+        "notation_triples": 108
+      },
+      "vowl-subset": {
+        "bindings": 14,
+        "digest": "8596741693b1bf336fd55e3fab67a0217b6105654f224440e8dc2dd9e87c33ec",
+        "edges": 20,
+        "nodes": 17,
+        "notation_triples": 192
+      }
+    }
+  },
+  "eq3": {
+    "backend_count": 3,
+    "per_notation": {
+      "uml-style": {
+        "all_backends_saw_same_avm": true,
+        "avm_digest": "3f36b4ab3e4a337a1878b498068192153e6a54d3742f6fa83ee8eb4d7cc351c2",
+        "backends": {
+          "cytoscape": {
+            "adapter_loc": 85,
+            "avm_digest_after_render": "3f36b4ab3e4a337a1878b498068192153e6a54d3742f6fa83ee8eb4d7cc351c2",
+            "bytes": 7660
+          },
+          "graphviz": {
+            "adapter_loc": 102,
+            "avm_digest_after_render": "3f36b4ab3e4a337a1878b498068192153e6a54d3742f6fa83ee8eb4d7cc351c2",
+            "bytes": 2090
+          },
+          "mermaid": {
+            "adapter_loc": 59,
+            "avm_digest_after_render": "3f36b4ab3e4a337a1878b498068192153e6a54d3742f6fa83ee8eb4d7cc351c2",
+            "bytes": 518
+          }
+        },
+        "deterministic_across_runs": true
+      },
+      "vowl-subset": {
+        "all_backends_saw_same_avm": true,
+        "avm_digest": "8596741693b1bf336fd55e3fab67a0217b6105654f224440e8dc2dd9e87c33ec",
+        "backends": {
+          "cytoscape": {
+            "adapter_loc": 85,
+            "avm_digest_after_render": "8596741693b1bf336fd55e3fab67a0217b6105654f224440e8dc2dd9e87c33ec",
+            "bytes": 19729
+          },
+          "graphviz": {
+            "adapter_loc": 102,
+            "avm_digest_after_render": "8596741693b1bf336fd55e3fab67a0217b6105654f224440e8dc2dd9e87c33ec",
+            "bytes": 4863
+          },
+          "mermaid": {
+            "adapter_loc": 59,
+            "avm_digest_after_render": "8596741693b1bf336fd55e3fab67a0217b6105654f224440e8dc2dd9e87c33ec",
+            "bytes": 1074
+          }
+        },
+        "deterministic_across_runs": true
+      }
+    }
+  },
+  "eq4": {
+    "rows": [
+      {
+        "model": "Library (example)",
+        "notations": {
+          "uml-style": {
+            "edges": 7,
+            "median_seconds": 0.0507,
+            "nodes": 7,
+            "warnings": 0
+          },
+          "vowl-subset": {
+            "edges": 20,
+            "median_seconds": 0.0659,
+            "nodes": 17,
+            "warnings": 0
+          }
+        },
+        "path": "examples/library.ttl",
+        "provenance": "authored here",
+        "triples": 63
+      },
+      {
+        "model": "FOAF",
+        "notations": {
+          "uml-style": {
+            "edges": 42,
+            "median_seconds": 0.0549,
+            "nodes": 17,
+            "warnings": 0
+          },
+          "vowl-subset": {
+            "edges": 116,
+            "median_seconds": 0.094,
+            "nodes": 71,
+            "warnings": 0
+          }
+        },
+        "path": "examples/vendor/foaf.rdf",
+        "provenance": "third-party",
+        "triples": 631
+      },
+      {
+        "model": "DCAT 3",
+        "notations": {
+          "uml-style": {
+            "edges": 21,
+            "median_seconds": 0.055,
+            "nodes": 17,
+            "warnings": 0
+          },
+          "vowl-subset": {
+            "edges": 46,
+            "median_seconds": 0.1125,
+            "nodes": 40,
+            "warnings": 0
+          }
+        },
+        "path": "examples/vendor/dcat.ttl",
+        "provenance": "third-party",
+        "triples": 1695
+      },
+      {
+        "model": "ORG",
+        "notations": {
+          "uml-style": {
+            "edges": 34,
+            "median_seconds": 0.0639,
+            "nodes": 15,
+            "warnings": 0
+          },
+          "vowl-subset": {
+            "edges": 62,
+            "median_seconds": 0.0943,
+            "nodes": 43,
+            "warnings": 0
+          }
+        },
+        "path": "examples/vendor/org.ttl",
+        "provenance": "third-party",
+        "triples": 748
+      },
+      {
+        "model": "SKOS",
+        "notations": {
+          "uml-style": {
+            "edges": 5,
+            "median_seconds": 0.0427,
+            "nodes": 5,
+            "warnings": 0
+          },
+          "vowl-subset": {
+            "edges": 9,
+            "median_seconds": 0.0705,
+            "nodes": 9,
+            "warnings": 0
+          }
+        },
+        "path": "examples/vendor/skos.rdf",
+        "provenance": "third-party",
+        "triples": 252
+      },
+      {
+        "model": "PROV-O",
+        "notations": {
+          "uml-style": {
+            "edges": 68,
+            "median_seconds": 0.0679,
+            "nodes": 31,
+            "warnings": 0
+          },
+          "vowl-subset": {
+            "edges": 118,
+            "median_seconds": 0.1121,
+            "nodes": 77,
+            "warnings": 0
+          }
+        },
+        "path": "examples/vendor/prov-o.ttl",
+        "provenance": "third-party",
+        "triples": 1146
+      }
+    ]
+  }
+}
